@@ -60,16 +60,16 @@ export default function QuestionPage(){
   <Grid size={{ xs:12, md: 12}}>
       <Box sx={{ fontSize: 'h6.fontSize', m: 1 }}>Ask Your Question </Box>
   </Grid>
-  <Grid size={{ xs:12, md: 12}}>
+  <Grid size={{ xs:12, md: 12}} sx={{  display: "flex",justifyContent:"center"} }>
    <Box
       component="form"
       onSubmit={handleSubmit(onSubmit)}
-      sx={{  display: "flex",flexDirection: 'column', alignItems: 'flex-start'} }
+      sx={{  display: "flex",flexDirection: 'column', alignItems: 'flex-start',justifyContent:"center",p:2} }
       noValidate
       autoComplete="off"
       
     >
-      <div>
+    
         <TextField
           id="title"
           label="title"
@@ -88,7 +88,7 @@ export default function QuestionPage(){
        />
              {errors.Description && <p>Last name is required.</p>}
         <button type="submit" variant="contained">onSubmit</button>
-      </div>
+     
    </Box>
   </Grid>
 </Grid>
