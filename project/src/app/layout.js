@@ -13,11 +13,13 @@ export default function RootLayout({children}){
   };
   return (
     <html lang='en'>
-      <ThemeProvider theme={theme}>
-        <CssBaseline/>
-        <Navbar toggleTheme={toggleTheme}/>
-        {children}
-      </ThemeProvider>
+      <body>
+        <ThemeProvider theme={theme}>
+          <CssBaseline/>
+          <Navbar toggleTheme={toggleTheme}/>
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   )
 }
