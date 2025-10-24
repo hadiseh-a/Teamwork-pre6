@@ -2,12 +2,12 @@
 import {Box, Button, Grid, TextField, Typography} from "@mui/material";
 import Image from 'next/image';
 import { useRouter } from "next/navigation";
-import {useForm, SubmitHandler} from "react-hook-form"
+import {useForm} from "react-hook-form"
 export default function QuestionPage(){
     const router=useRouter();
     const handleClick = (e) => {
     e.preventDefault()
-    // router.push("/")
+    router.push("/questions")
   }
   const{register,
     handleSubmit,
