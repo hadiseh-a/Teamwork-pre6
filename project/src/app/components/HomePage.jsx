@@ -49,7 +49,7 @@ export default function QuestionPage(){
              pariatur at, nihil possimus sint dolores 
              explicabo officiis, accusantium quis in non. 
          </Typography>
-    <Button variant="contained"onClick={handleClick} >go to guestions</Button>
+    <Button variant="contained" onClick={handleClick} >go to questions</Button>
    </Grid>
    <Grid size={{ xs: 12, md: 4 }}>
      
@@ -107,7 +107,7 @@ export default function QuestionPage(){
          />
    {/* <input {...register("Description", { required: true })} /> */}
    {errors.Description && <p>Last name is required.</p>}
-   <button type="submit" variant="contained" style={{ width: "80%" }}>onSubmit</button>
+   <Button type="submit" variant="contained" style={{ width: "80%" }}>onSubmit</Button>
    
    </Box>
  </Box>

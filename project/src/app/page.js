@@ -1,5 +1,5 @@
 import styles from "./page.module.css";
-import QuestionPage from "./component/HomePage";
+import QuestionPage from "./components/HomePage";
 
 export default function Home() {
   return (
