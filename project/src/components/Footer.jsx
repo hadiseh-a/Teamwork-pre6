@@ -13,7 +13,7 @@ export default function Footer(){
                 py:2,
                 px:3,
                 textAlign:'center',
-                backgroundColor: theme.palette.background.default,
+                backgroundColor: theme.palette.primary.main,
                 borderTop:`1px solid ${theme.palette.divider}`
             }}>
                 <Typography variant="body2" color="text.secondary">
