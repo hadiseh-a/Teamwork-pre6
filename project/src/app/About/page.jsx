@@ -23,14 +23,13 @@ export default function AboutPage() {
         py: 6,
       }}
     >
-      {/* Top Title */}
+
       <Box sx={{ textAlign: 'center' }}>
         <Typography variant="h4" gutterBottom>
           About the Web
         </Typography>
       </Box>
 
-      {/* Centered Description */}
       <Box
         sx={{
           flexGrow: 1,
@@ -45,7 +44,6 @@ export default function AboutPage() {
         </Typography>
       </Box>
 
-      {/* Bottom Section */}
       <Box sx={{ textAlign: 'center' }}>
         <Typography variant="h6" gutterBottom>
           Connect with us
