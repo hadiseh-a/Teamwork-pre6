@@ -19,8 +19,8 @@ export default function QuestionPage(){
   };
     return(
 
-      <>
-      <Box
+
+ <Box
        sx={{
          mt:"5",
          display: "flex",
@@ -34,8 +34,8 @@ export default function QuestionPage(){
          p: 2,
        }}
      >
- <Grid container
- //  spacing={2}
+   <Grid container
+        //  spacing={2}
          justifyContent="center"
          alignItems="center"
          // maxWidth="md"
@@ -55,17 +55,14 @@ export default function QuestionPage(){
      
     <Image
      src="/download.jpg"
-       width={300}
+       width={200}
        height={100}
        alt="Picture of the author"
        style={{padding:4}}/>
-       <Box sx={{ fontSize: 'h6.fontSize', m: 1 }}>Ask Your Question </Box>
-   </Grid>
-  {/* <Grid size={{ xs:12, md: 4}}>
        
-  </Grid> */}
- </Grid>
- <Box
+   </Grid>
+   </Grid>
+   <Box
        component="form"
        onSubmit={handleSubmit(onSubmit)}
        sx={{
@@ -80,37 +77,32 @@ export default function QuestionPage(){
          p: 3,
          borderRadius: 2,
          boxShadow: 2,
-       } }
-       noValidate
-       autoComplete="off"
+         } }
+         noValidate
+         autoComplete="off"
        
      >
-       
-     <TextField
-     sx={{ width: "80%" }}
+       <Box sx={{ fontSize: 'h6.fontSize', m: 1 }}>Ask Your Question </Box>
+         <TextField
+           sx={{ width: "80%" }}
            id="title"
            label="title"
-           type="password"
            autoComplete="title"
             {...register("Title", { required: true })}
          />
-   {/* <input {...register("Title", { required: true })} />  */}
-   {errors.Title && <p>Last name is required.</p>}
-   <TextField
-   sx={{ width: "80%" }}
+          {errors.Title && <p>title is required.</p>}
+         <TextField
+           sx={{ width: "80%" }}
            id="Description"
            label="Description"
            multiline
            rows={4}
-           // defaultValue="Description"
             {...register("Description", { required: true })}
          />
-   {/* <input {...register("Description", { required: true })} /> */}
-   {errors.Description && <p>Last name is required.</p>}
-   <button type="submit" variant="contained" style={{ width: "80%" }}>onSubmit</button>
+          {errors.Description && <p>Description is required.</p>}
+          <Button type="submit" variant="contained" style={{ width: "80%" }}>onSubmit</Button>
    
    </Box>
  </Box>
-         </>
      )
  }
