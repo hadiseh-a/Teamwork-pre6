@@ -17,6 +17,7 @@ export const getTheme = (mode) =>
         danger:mode === "light" ? "#bd593bff" : "#f77c7cff",
         button: mode === "light" ? "#87469fff" : "#b291b6ff",
         title:mode === "light" ? "#87469fff" : "#b291b6ff",
+        form:mode === "light" ? "#ffffffff" : "#b291b6ff",
       },
     },
   });
