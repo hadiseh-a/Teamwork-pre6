@@ -53,8 +53,8 @@ export default function QuestionPage(){
      
     <Image
      src="/unnamed.jpg"
-       width={200}
-       height={100}
+       width={300}
+       height={200}
        alt="Picture of the author"
        style={{padding:4}}/>
        
