@@ -14,6 +14,9 @@ export const getTheme = (mode) =>
       secondary: {
         main: mode === "light" ? "#fff" : "#252525ff",
         contrastText: mode === "light" ? "#090808ff" : "#9b9494ff",
+        danger:mode === "light" ? "#bd593bff" : "#f77c7cff",
+        button: mode === "light" ? "#87469fff" : "#b291b6ff",
+        title:mode === "light" ? "#87469fff" : "#b291b6ff",
       },
     },
   });
