@@ -17,24 +17,32 @@ export default function AboutPage() {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        p: 4,
         backgroundColor: theme.palette.background.default,
         color: theme.palette.text.primary,
       }}
     >
-      <Box>
+      <Box
+        sx={{
+          flexGrow: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          px: 4,
+          textAlign: 'center',
+        }}
+      >
         <Typography variant="h4" gutterBottom>
           About the Web
         </Typography>
         <Typography variant="body1" paragraph>
-          tesssssssssssssssssssssssssssst
+          this is a site like reddit that you can ask your questions and people can answer them .
         </Typography>
         <Typography variant="h6" gutterBottom>
           Connect with us
         </Typography>
       </Box>
-
-      <Box sx={{ textAlign: 'center', mt: 4 }}>
+      <Box sx={{ textAlign: 'center', pb: 4 }}>
         <Stack direction="row" spacing={2} justifyContent="center">
           <Link
             href="https://instagram.com/sample"
