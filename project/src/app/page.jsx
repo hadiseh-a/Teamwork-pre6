@@ -47,7 +47,7 @@ export default function QuestionPage(){
              pariatur at, nihil possimus sint dolores 
              explicabo officiis, accusantium quis in non. 
          </Typography>
-    <Button sx={{color:theme.palette.secondary.button ,fontWeight:"bold",border:"Background"}} onClick={handleClick} >go to guestions</Button>
+    <Button sx={{color:theme.palette.secondary.button ,fontWeight:"bold",border:"Background"}} onClick={handleClick} >go to Questions</Button>
    </Grid>
    <Grid size={{ xs: 12, md: 4 }}>
      
