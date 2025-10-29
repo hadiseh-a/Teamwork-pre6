@@ -1,16 +1,12 @@
 import mongoose from "mongoose";
 
-const mongooseSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    require: true,
+const questionSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true },
+    description: { type: String, required: true },
   },
-  description: {
-    type: String,
-    require: true,
-  },
-});
+  { timestamps: true }
+);
 
-const Question = mongoose.model("question", mongooseSchema);
-
-module.exports = { Question };
+export const Question =
+  mongoose.models.Question || mongoose.model("Question", questionSchema);

@@ -1,14 +1,17 @@
 import mongoose from "mongoose";
 
-const URI="";
-if (!URI) {
-  throw new Error("Please define the MONGODB_URI environment variable");
-}
-  async function connectDb(){
+const MONGODB_URI = "mongodb://127.0.0.1:27017/mydb";
+
+let isConnected = false;
+
+export async function connectDB() {
+  if (isConnected) return;
+
   try {
-      const db = await mongoose.Connection(URI);
-     alert(`mongodb connect}`);
+    await mongoose.connect(MONGODB_URI);
+    isConnected = true;
+    console.log("Connected to MongoDB locally");
   } catch (error) {
-    alert(`mongodb connect error ${error.message}`)
+    console.error("MongoDB connection error:", error);
   }
 }
