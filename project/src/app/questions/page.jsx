@@ -64,8 +64,8 @@ export default function QuestionsPage() {
     async function fetchQuestions() {
       try {
         const res = await fetch("/api/question");
-        const data = await res.json(); // فقط خود داده
-        setQuestions(data); // بدون data.success
+        const data = await res.json();
+        setQuestions(data);
       } catch (err) {
         console.error(err);
       }
