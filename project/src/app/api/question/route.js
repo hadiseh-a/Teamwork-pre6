@@ -29,3 +29,23 @@ export async function POST(req) {
     });
   }
 }
+
+export async function DELETE(req, { params }) {
+  try {
+    await connectDB();
+    const { id } = params;
+    const deleted = await Question.findByIdAndDelete(id);
+    if (!deleted)
+      return new Response(JSON.stringify({ message: "Question not found" }), {
+        status: 404,
+      });
+
+    return new Response(JSON.stringify({ message: "Deleted successfully" }), {
+      status: 200,
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ message: error.message }), {
+      status: 500,
+    });
+  }
+}
