@@ -1,236 +1,151 @@
 "use client";
-
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
   TextField,
   Button,
   IconButton,
-  useTheme,
   CircularProgress,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useForm, Controller } from "react-hook-form";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
-export default function Edit_QuestionPage() {
-  const [answers, setAnswers] = useState([]);
+export default function QuestionDetailPage() {
+  const { id } = useParams();
   const [question, setQuestion] = useState(null);
+  const [answers, setAnswers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const theme = useTheme();
-  const params = useParams();
-  const router = useRouter();
+  const [newAnswer, setNewAnswer] = useState("");
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
-    defaultValues: { newAnswer: "" },
-  });
-
-
+  
   useEffect(() => {
-    if (!params?.id) return;
-
-    const fetchQuestion = async () => {
-      try {
-        const res = await fetch(`/api/questions/${params.id}`);
-        if (res.status === 404) {
-          setError("Question not found");
-          setLoading(false);
-          return;
-        }
-        if (!res.ok) throw new Error("Failed to fetch question");
-        const data = await res.json();
-        setQuestion(data);
-        setAnswers(data.answers || []);
+    async function fetchQuestion() {
+      const res = await fetch(`/api/question/${id}`);
+      if (!res.ok) {
+        setQuestion(null);
         setLoading(false);
-      } catch (err) {
-        setError("Failed to load question");
-        setLoading(false);
+        return;
       }
-    };
-
+      const data = await res.json();
+      setQuestion(data);
+      setAnswers(data.answers || []);
+      setLoading(false);
+    }
     fetchQuestion();
-  }, [params?.id]);
+  }, [id]);
 
-
-  const patchAnswers = async (newAnswers) => {
-    if (!question?.id) return false;
+  // متد به‌روزرسانی دیتابیس
+  const updateQuestion = async (newAnswers) => {
     try {
-      const res = await fetch(`/api/questions/${question.id}`, {
+      const res = await fetch(`/api/question/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ answers: newAnswers }),
       });
-      if (!res.ok) throw new Error("Failed to update question");
-      return true;
-    } catch (err) {
-      console.error("❌ Error updating:", err);
-      return false;
+      if (res.ok) {
+        const updated = await res.json();
+        setAnswers(updated.answers);
+      }
+    } catch (error) {
+      console.error("Update failed:", error);
     }
   };
 
-  const handleAddAnswer = async (data) => {
-    const answer = data.newAnswer.trim();
-    if (!answer) return;
 
-    const newAnswers = [...answers, answer];
-    const success = await patchAnswers(newAnswers);
-    if (success) {
-      setAnswers(newAnswers);
-      reset();
-    } else {
-      alert("Failed to add answer. Please try again.");
-    }
+  const handleAddAnswer = async () => {
+    if (!newAnswer.trim()) return;
+    const newAnswers = [...answers, newAnswer.trim()];
+    await updateQuestion(newAnswers);
+    setNewAnswer("");
   };
 
-  const handleDelete = async (index) => {
+
+  const handleDeleteAnswer = async (index) => {
     const newAnswers = answers.filter((_, i) => i !== index);
-    const success = await patchAnswers(newAnswers);
-    if (success) setAnswers(newAnswers);
-    else alert("Failed to delete answer. Please try again.");
+    await updateQuestion(newAnswers);
   };
 
-  const handleChange = async (e, index) => {
-    const newAnswers = [...answers];
-    newAnswers[index] = e.target.value;
-    const success = await patchAnswers(newAnswers);
-    if (success) setAnswers(newAnswers);
-    else alert("Failed to update answer. Please try again.");
+
+  const handleAnswerBlur = async (index, value) => {
+    const updated = [...answers];
+    updated[index] = value.trim();
+    await updateQuestion(updated);
   };
 
   if (loading)
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
-        <CircularProgress />
-      </Box>
-    );
-
-  if (error)
-    return (
-      <Box sx={{ textAlign: "center", mt: 10 }}>
-        <Typography variant="h5" color="error">
-          {error}
-        </Typography>
-        <Button onClick={() => router.push("/questions")} sx={{ mt: 2 }}>
-          Back to Questions
-        </Button>
-      </Box>
-    );
-
   return (
     <Box
       sx={{
         display: "flex",
-        flexDirection: "column",
+        justifyContent: "center",
         alignItems: "center",
-        maxWidth: 600,
-        mx: "auto",
-        px: 3,
-        py: 10,
-        bgcolor: theme.palette.background.default,
-        color: theme.palette.text.primary,
+        height: "100vh", 
       }}
     >
-      <Typography variant="h4" fontWeight="bold" color="primary" gutterBottom>
-        {question.tag}
+      <CircularProgress />
+    </Box>
+  );
+  if (!question)
+    return (
+      <Typography variant="h5" color="error" align="center" sx={{ mt: 10 }}>
+        ❌ Question not found
       </Typography>
+    );
 
-      <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+  return (
+    <Box sx={{ maxWidth: 700, mx: "auto", p: 4 }}>
+      <Typography variant="h4" fontWeight="bold" gutterBottom>
         {question.title}
       </Typography>
-
-      <Typography variant="body2" color="text.disabled" gutterBottom>
-        {new Date(question.date).toLocaleString()}
+      <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+        {question.description}
       </Typography>
 
-      <Typography variant="h6" sx={{ mt: 3 }} color="secondary">
-        Answers:
+      <Typography variant="h6" sx={{ mt: 4 }}>
+        Answers
       </Typography>
 
-      <Box sx={{ mt: 3, width: "100%" }}>
-        {answers.map((answer, index) => (
-          <Box
-            key={index}
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              bgcolor: theme.palette.background.paper,
-              padding: "10px",
-              marginBottom: "10px",
-              borderRadius: "6px",
-              border: `1px solid ${theme.palette.divider}`,
-              boxShadow: theme.shadows[1],
-            }}
-          >
-            <TextField
-              value={answer}
-              fullWidth
-              variant="outlined"
-              multiline
-              minRows={3}
-              onChange={(e) => handleChange(e, index)}
-              sx={{
-                backgroundColor: theme.palette.background.default,
-                "& .MuiOutlinedInput-root": { "& fieldset": { border: "none" } },
-              }}
-            />
-
-            <IconButton
-              onClick={() => handleDelete(index)}
-              sx={{
-                ml: 1,
-                color: "#f44336",
-                "&:hover": { backgroundColor: "rgba(244,67,54,0.1)" },
-              }}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Box>
-        ))}
-      </Box>
-
-      <form onSubmit={handleSubmit(handleAddAnswer)} style={{ width: "100%" }}>
-        <Controller
-          name="newAnswer"
-          control={control}
-          rules={{ required: "This field is required" }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              placeholder="Write your answer..."
-              multiline
-              minRows={3}
-              fullWidth
-              variant="outlined"
-              error={!!errors.newAnswer}
-              helperText={errors.newAnswer ? errors.newAnswer.message : ""}
-              sx={{ marginBottom: "16px", bgcolor: theme.palette.background.paper }}
-            />
-          )}
-        />
-
-        <Button
-          type="submit"
-          variant="contained"
-          size="large"
-          color="primary"
+      {answers.map((ans, index) => (
+        <Box
+          key={index}
           sx={{
-            borderRadius: 0.5,
-            fontWeight: "bold",
-            textTransform: "none",
-            boxShadow: theme.shadows[2],
+            display: "flex",
+            alignItems: "center",
+            mt: 2,
+            p: 2,
+            border: "1px solid #ccc",
+            borderRadius: 1,
           }}
         >
-          SUBMIT
+          <TextField
+            fullWidth
+            multiline
+            defaultValue={ans}
+            onBlur={(e) => handleAnswerBlur(index, e.target.value)}
+          />
+          <IconButton
+            onClick={() => handleDeleteAnswer(index)}
+            sx={{ color: "red", ml: 1 }}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Box>
+      ))}
+
+      <Box sx={{ mt: 3 }}>
+        <TextField
+          fullWidth
+          multiline
+          label="Add a new answer"
+          value={newAnswer}
+          onChange={(e) => setNewAnswer(e.target.value)}
+          sx={{ mb: 2 }}
+        />
+        <Button variant="contained" onClick={handleAddAnswer}>
+          Submit Answer
         </Button>
-      </form>
+      </Box>
     </Box>
   );
 }
