@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -8,14 +8,20 @@ import {
   Button,
   IconButton,
   useTheme,
+  CircularProgress,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useForm, Controller } from "react-hook-form";
+import { useParams, useRouter } from "next/navigation";
 
 export default function Edit_QuestionPage() {
   const [answers, setAnswers] = useState([]);
-  const [borders, setBorders] = useState([]);
+  const [question, setQuestion] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const theme = useTheme();
+  const params = useParams();
+  const router = useRouter();
 
   const {
     control,
@@ -23,32 +29,99 @@ export default function Edit_QuestionPage() {
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      newAnswer: "",
-    },
+    defaultValues: { newAnswer: "" },
   });
 
-  const onSubmit = (data) => {
-    const answer = data.newAnswer.trim();
-    if (answer !== "") {
-      setAnswers([...answers, answer]);
-      setBorders([...borders, true]);
-      reset();
+
+  useEffect(() => {
+    if (!params?.id) return;
+
+    const fetchQuestion = async () => {
+      try {
+        const res = await fetch(`/api/questions/${params.id}`);
+        if (res.status === 404) {
+          setError("Question not found");
+          setLoading(false);
+          return;
+        }
+        if (!res.ok) throw new Error("Failed to fetch question");
+        const data = await res.json();
+        setQuestion(data);
+        setAnswers(data.answers || []);
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to load question");
+        setLoading(false);
+      }
+    };
+
+    fetchQuestion();
+  }, [params?.id]);
+
+
+  const patchAnswers = async (newAnswers) => {
+    if (!question?.id) return false;
+    try {
+      const res = await fetch(`/api/questions/${question.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answers: newAnswers }),
+      });
+      if (!res.ok) throw new Error("Failed to update question");
+      return true;
+    } catch (err) {
+      console.error("❌ Error updating:", err);
+      return false;
     }
   };
 
-  const handleDelete = (index) => {
-    const newAnswers = answers.filter((_, i) => i !== index);
-    const newBorders = borders.filter((_, i) => i !== index);
-    setAnswers(newAnswers);
-    setBorders(newBorders);
+  const handleAddAnswer = async (data) => {
+    const answer = data.newAnswer.trim();
+    if (!answer) return;
+
+    const newAnswers = [...answers, answer];
+    const success = await patchAnswers(newAnswers);
+    if (success) {
+      setAnswers(newAnswers);
+      reset();
+    } else {
+      alert("Failed to add answer. Please try again.");
+    }
   };
 
-  const handleChange = (e, index) => {
+  const handleDelete = async (index) => {
+    const newAnswers = answers.filter((_, i) => i !== index);
+    const success = await patchAnswers(newAnswers);
+    if (success) setAnswers(newAnswers);
+    else alert("Failed to delete answer. Please try again.");
+  };
+
+  const handleChange = async (e, index) => {
     const newAnswers = [...answers];
     newAnswers[index] = e.target.value;
-    setAnswers(newAnswers);
+    const success = await patchAnswers(newAnswers);
+    if (success) setAnswers(newAnswers);
+    else alert("Failed to update answer. Please try again.");
   };
+
+  if (loading)
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
+        <CircularProgress />
+      </Box>
+    );
+
+  if (error)
+    return (
+      <Box sx={{ textAlign: "center", mt: 10 }}>
+        <Typography variant="h5" color="error">
+          {error}
+        </Typography>
+        <Button onClick={() => router.push("/questions")} sx={{ mt: 2 }}>
+          Back to Questions
+        </Button>
+      </Box>
+    );
 
   return (
     <Box
@@ -62,18 +135,21 @@ export default function Edit_QuestionPage() {
         py: 10,
         bgcolor: theme.palette.background.default,
         color: theme.palette.text.primary,
-        transition: "background-color 0.3s ease, color 0.3s ease",
       }}
     >
-      <Typography variant="h3" fontWeight="bold" color="primary" gutterBottom>
-        Next.js
+      <Typography variant="h4" fontWeight="bold" color="primary" gutterBottom>
+        {question.tag}
       </Typography>
 
       <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-        What is SSR in Next.js?
+        {question.title}
       </Typography>
 
-      <Typography variant="h6" sx={{ mt: 2 }} color="secondary">
+      <Typography variant="body2" color="text.disabled" gutterBottom>
+        {new Date(question.date).toLocaleString()}
+      </Typography>
+
+      <Typography variant="h6" sx={{ mt: 3 }} color="secondary">
         Answers:
       </Typography>
 
@@ -89,11 +165,8 @@ export default function Edit_QuestionPage() {
               padding: "10px",
               marginBottom: "10px",
               borderRadius: "6px",
-              border: borders[index]
-                ? `2px solid ${theme.palette.primary.main}`
-                : `1px solid ${theme.palette.divider}`,
+              border: `1px solid ${theme.palette.divider}`,
               boxShadow: theme.shadows[1],
-              transition: "all 0.2s ease",
             }}
           >
             <TextField
@@ -101,24 +174,20 @@ export default function Edit_QuestionPage() {
               fullWidth
               variant="outlined"
               multiline
-              minRows={4}
+              minRows={3}
               onChange={(e) => handleChange(e, index)}
               sx={{
                 backgroundColor: theme.palette.background.default,
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": { border: "none" },
-                },
+                "& .MuiOutlinedInput-root": { "& fieldset": { border: "none" } },
               }}
             />
 
             <IconButton
-              color="secondary"
               onClick={() => handleDelete(index)}
               sx={{
                 ml: 1,
-                "&:hover": {
-                  backgroundColor: theme.palette.action.hover,
-                },
+                color: "#f44336",
+                "&:hover": { backgroundColor: "rgba(244,67,54,0.1)" },
               }}
             >
               <DeleteIcon />
@@ -127,7 +196,7 @@ export default function Edit_QuestionPage() {
         ))}
       </Box>
 
-      <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
+      <form onSubmit={handleSubmit(handleAddAnswer)} style={{ width: "100%" }}>
         <Controller
           name="newAnswer"
           control={control}
@@ -137,23 +206,12 @@ export default function Edit_QuestionPage() {
               {...field}
               placeholder="Write your answer..."
               multiline
-              minRows={4}
+              minRows={3}
               fullWidth
               variant="outlined"
               error={!!errors.newAnswer}
               helperText={errors.newAnswer ? errors.newAnswer.message : ""}
-              sx={{
-                marginBottom: "16px",
-                bgcolor: theme.palette.background.paper,
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: field.value.trim()
-                      ? theme.palette.primary.main
-                      : theme.palette.divider,
-                    borderWidth: field.value.trim() ? 2 : 1,
-                  },
-                },
-              }}
+              sx={{ marginBottom: "16px", bgcolor: theme.palette.background.paper }}
             />
           )}
         />

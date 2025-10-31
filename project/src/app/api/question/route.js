@@ -49,3 +49,30 @@ export async function DELETE(req, { params }) {
     });
   }
 }
+export async function PATCH(req, { params }) {
+  try {
+    await connectDB();
+    const { id } = params;
+    const { title, description } = await req.json();
+
+    const updated = await Question.findByIdAndUpdate(
+      id,
+      { title, description },
+      { new: true } 
+    );
+
+    if (!updated)
+      return new Response(JSON.stringify({ message: "Question not found" }), {
+        status: 404,
+      });
+
+    return new Response(JSON.stringify({ question: updated }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ message: error.message }), {
+      status: 500,
+    });
+  }
+}
