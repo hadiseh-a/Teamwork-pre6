@@ -35,7 +35,6 @@ export default function QuestionDetailPage() {
     fetchQuestion();
   }, [id]);
 
-  // متد به‌روزرسانی دیتابیس
   const updateQuestion = async (newAnswers) => {
     try {
       const res = await fetch(`/api/question/${id}`, {
