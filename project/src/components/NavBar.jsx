@@ -17,7 +17,7 @@ export default function Navbar({ toggleTheme }) {
           <Button color="inherit" onClick={() => router.push("/questions")}>
             Questions
           </Button>
-          <Button color="inherit" onClick={() => router.push("/about")}>
+          <Button color="inherit" onClick={() => router.push("/About")}>
             About
           </Button>
         </div>

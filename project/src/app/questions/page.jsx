@@ -20,7 +20,8 @@ import { useRouter } from "next/navigation";
 const StyledSearchField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
     borderRadius: 4,
-    backgroundColor: "#fff",
+    backgroundColor:
+      theme.palette.mode === "light" ? "#fff" : "rgba(255, 255, 255, 0.08)",
     boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
     "& fieldset": { borderColor: "transparent" },
     "&:hover fieldset": { borderColor: "transparent" },

@@ -110,7 +110,7 @@ export default function QuestionPage() {
           Ask Your Question{" "}
         </Box>
         <TextField
-          sx={{ width: "80%", background: theme.palette.secondary.form }}
+          sx={{ width: "80%", background: theme.palette.secondary.main }}
           id="title"
           label="title"
           autoComplete="title"
@@ -128,7 +128,7 @@ export default function QuestionPage() {
           </p>
         )}
         <TextField
-          sx={{ width: "80%", background: theme.palette.secondary.form }}
+          sx={{ width: "80%", background: theme.palette.secondary.main }}
           id="Description"
           label="Description"
           multiline
